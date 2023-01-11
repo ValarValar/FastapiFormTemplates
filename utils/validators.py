@@ -1,20 +1,25 @@
 import datetime
 
-import phonenumbers
-from phonenumbers import carrier
 from pydantic import EmailStr
 
 
-
 def phone_validator(phone_number: str):
-    phonenumbers.parse(phone_number, None)
+    if phone_number[0] == ' ':
+        phone_number = phone_number.replace(' ', '+', 1)
+    phone_number = ''.join(phone_number.split())
+    PHONE_NUMBER_LEN = 12
+    # '7' should be after plus sign
+    if phone_number[1] == '7':
+        if phone_number[1:].isdigit() and len(phone_number) == PHONE_NUMBER_LEN:
+            return
+    raise ValueError
 
 
 def is_phone_number(phone_number: str) -> bool:
     try:
         phone_validator(phone_number)
         return True
-    except Exception as e:
+    except ValueError:
         return False
 
 
@@ -45,7 +50,7 @@ def is_email(email: str):
         return False
 
 
-def convert_value_to_type(input_value:str) -> str:
+def convert_value_to_type(input_value: str) -> str:
     if is_date(input_value):
         return 'date'
     elif is_phone_number(input_value):
@@ -55,8 +60,8 @@ def convert_value_to_type(input_value:str) -> str:
     else:
         return 'text'
 
-a = ['hi@mail.ru', 'hi@', '12.15.2022', '15.12.2022', '+7 989 702 62 68', '99897026268', '79875397026268']
-for x in a:
-    print(f'{x} its type is {convert_value_to_type(x)}')
-ro_number = phonenumbers.parse("+79897026268", "RU")
-carrier.name_for_number(ro_number, "ru")
+
+def convert_dict_values_to_type(input: dict) -> dict:
+    for key in input:
+        input[key] = convert_value_to_type(input[key])
+    return input

@@ -3,6 +3,7 @@ FROM python:3.9.10-slim
 
 # Указываем рабочую директорию
 WORKDIR /usr/src/app
+ENV PYTHONPATH /usr/src/app
 
 # Запрещаем Python писать файлы .pyc на диск
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -18,4 +19,3 @@ COPY . .
 
 # Запускаем проект
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0"]
-#CMD ["python", "main.py"]

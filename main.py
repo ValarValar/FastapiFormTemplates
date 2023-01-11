@@ -1,16 +1,8 @@
-from functools import lru_cache
-
 from fastapi import FastAPI
-from motor.motor_asyncio import AsyncIOMotorClient
 
 from api.endpoints.forms import router as forms_router
-from core.config import Settings
-
-
-@lru_cache()
-def get_settings():
-    return Settings()
-
+from core.config import get_settings
+from utils.db_service import get_mongodb_service, MongoDbService
 
 settings = get_settings()
 
@@ -30,13 +22,12 @@ async def root():
 
 @app.on_event("startup")
 async def startup_db_client():
-    app.mongodb_client = AsyncIOMotorClient(settings.MONGODB_URL)
-    app.mongodb = app.mongodb_client[settings.MONGODB_DATABASE]
+    app.db_service: MongoDbService = get_mongodb_service()
 
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
-    app.mongodb_client.close()
+    app.db_service.mongodb_client.close()
 
 
 app.include_router(router=forms_router, prefix="/api/forms")

@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.8'
 
 services:
   form_app:
@@ -6,10 +6,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    networks:
-      - form_network
     ports:
       - "8000:8000"
+    networks:
+      - form_network
     env_file:
       - ./.env.dev
     depends_on:
@@ -18,10 +18,18 @@ services:
 
   form_mongodb:
     image: mongo:latest
+    volumes:
+      - ./fill_test_db.py:/docker-entrypoint-initdb.d/fill_test_db.py:ro
+      - mongodb_data:/var/lib/mongodb/data/
+
     env_file:
       - ./.env.dev
+    expose:
+      - 27017
     ports:
       - 27017:27017
+    networks:
+      - form_network
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       interval: 10s

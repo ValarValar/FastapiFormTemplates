@@ -1,25 +1,32 @@
 from typing import Union
+
 from fastapi import APIRouter, Request
 
-from utils.validators import convert_value_to_type
+from utils.validators import convert_dict_values_to_type
 
 router = APIRouter()
+
 
 @router.post(
     path="/get_form",
     summary="Поиск подходящего шаблона",
-    tags=["forms"]
+    tags=["forms"],
+    status_code=200,
 )
 async def find_form(request: Request) -> Union[str, dict]:
     params = dict(request.query_params)
-    for key in params:
-        params[key] = convert_value_to_type(params[key])
+    input_form = convert_dict_values_to_type(params)
 
-    form_templates = []
+    suitable_form_name = await request.app.db_service.find_suitable_form_template_task(input_form)
+    if suitable_form_name:
+        return_data = {
+            'msg': 'Suitable form template was found!',
+            'Form template name': suitable_form_name,
+        }
+    else:
+        return_data = {
+            'msg': 'Suitable form template was not found!',
+            'input_form': input_form,
+        }
 
-
-    #нельзя сравнивать на равенство, именно включение
-    for template in form_templates:
-        if dict(template) == params:
-            return 'template_name'
-    return params
+    return return_data
