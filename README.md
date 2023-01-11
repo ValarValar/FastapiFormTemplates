@@ -1,4 +1,5 @@
 # FastapiFormTemplates
+todo: update readme
 ## Project Setup     
 reminder: don't forger to configure your interpreter and activate venv.   
 - activate venv    
