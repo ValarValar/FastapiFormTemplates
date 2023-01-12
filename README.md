@@ -8,9 +8,9 @@ App database stores form templates like:
     "field_name_2": "phone"    
 }    
 ```
-Where email, phone, date, text define datatypes of values storing at fields.     
+Where _email, phone, date, text_ are available datatypes of fields    
 Task requires ___POST endpoint /get_form___ receiving parametrized requests such as: ___?f_name1=value1&f_name2=value2___     
-where f_name1 is field name.     
+where f_name1 is a field name.     
 Then it should validate by value one of specified fields' datatype       
 There are only 2 types of answer:
 - Case 1. Match:     
